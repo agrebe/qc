@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!-- Copyright 2026, University of Maryland, All Rights Reserved -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+
+
+<!--
+  Solve a forward propagator with qc, driven entirely by chroma.
+
+  QC_PROPAGATOR is registered in chroma's measurement factory by qc_chroma_main,
+  so it is configured here exactly like any measurement chroma ships, and its
+  output is an ordinary named LatticePropagator.
+
+    ./qc_chroma -i qc_prop.xml -o qc_prop.out.xml
+
+  The lattice must match the one this libqc was built for; the measurement
+  aborts with a clear message rather than corrupting anything if it does not.
+-->
+
+<chroma>
+<Param>
+  <InlineMeasurements>
+
+    <elem>
+      <Name>QC_PROPAGATOR</Name>
+      <Frequency>1</Frequency>
+      <Param>
+        <version>1</version>
+        <kappa>0.134</kappa>
+        <csw>1.87567</csw>
+        <tol>1e-10</tol>
+        <maxIter>100</maxIter>
+        <srcPos>0 0 0 0</srcPos>
+      </Param>
+      <NamedObject>
+        <gauge_id>default_gauge_field</gauge_id>
+        <prop_id>qc_prop</prop_id>
+      </NamedObject>
+    </elem>
+
+    <!--
+      Everything below is stock chroma, unmodified, consuming qc's propagator.
+      That is the point of the chain: QC_PROPAGATOR writes a real Propagator_t
+      record, so SINK_SMEAR reads it exactly as it reads INLINE_PROPAGATOR's
+      output, and HADRON_SPECTRUM then does the spectroscopy.  Nothing here
+      knows qc exists.
+    -->
+
+    <elem>
+      <Name>SINK_SMEAR</Name>
+      <Frequency>1</Frequency>
+      <Param>
+        <version>5</version>
+        <Sink>
+          <version>2</version>
+          <SinkType>POINT_SINK</SinkType>
+          <j_decay>3</j_decay>
+          <Displacement>
+            <version>1</version>
+            <DisplacementType>NONE</DisplacementType>
+          </Displacement>
+        </Sink>
+      </Param>
+      <NamedObject>
+        <gauge_id>default_gauge_field</gauge_id>
+        <prop_id>qc_prop</prop_id>
+        <smeared_prop_id>qc_prop_sink</smeared_prop_id>
+      </NamedObject>
+    </elem>
+
+    <elem>
+      <Name>HADRON_SPECTRUM</Name>
+      <Frequency>1</Frequency>
+      <Param>
+        <version>1</version>
+        <MesonP>true</MesonP>
+        <CurrentP>false</CurrentP>
+        <BaryonP>false</BaryonP>
+        <time_rev>false</time_rev>
+        <mom2_max>0</mom2_max>
+        <avg_equiv_mom>true</avg_equiv_mom>
+      </Param>
+      <NamedObject>
+        <gauge_id>default_gauge_field</gauge_id>
+        <sink_pairs>
+          <elem>
+            <first_id>qc_prop_sink</first_id>
+            <second_id>qc_prop_sink</second_id>
+          </elem>
+        </sink_pairs>
+      </NamedObject>
+    </elem>
+
+  </InlineMeasurements>
+
+  <nrow>16 16 16 32</nrow>
+</Param>
+
+<Cfg>
+  <cfg_type>SZINQIO</cfg_type>
+  <cfg_file>../../test/sample_config.lime</cfg_file>
+</Cfg>
+</chroma>

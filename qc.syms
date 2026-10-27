@@ -1,0 +1,79 @@
+# Copyright 2026, University of Maryland, All Rights Reserved
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Public symbols of libqc -- the export list, in qc.h's own order.
+#
+# Fed to `objcopy --keep-global-symbols`, which makes every symbol not listed
+# here local.  That is the entire symbol-hygiene mechanism for both artifacts:
+# a local symbol cannot collide at static link time and cannot be exported from
+# the shared library, so this one file defines the surface of libqc.a and
+# libqc.so alike.
+#
+# Two things to know before editing:
+#
+#   * Adding a function to qc.h without adding it here does not fail quietly.
+#     The symbol becomes local, and test/collide.c -- which takes the address
+#     of every entry point -- stops linking.  Deleting one has the same effect.
+#
+#   * qc_grid is deliberately absent.  It is an internal global (comm.h) that
+#     happens to sit in the public prefix, and is used throughout the tree.
+#     Hiding it costs nothing and leaves no external surface, so it is not
+#     worth renaming.
+#
+# This list is exhaustive: once built, the library offers these names and no
+# others, which `make check-exports` asserts.  Names the compiler leaves behind
+# do not get an exemption -- the two OpenMP variables that first slipped through
+# are dealt with in the link itself rather than by adding exceptions here.
+#
+# A name listed here that does not exist in the build is harmless -- objcopy
+# ignores it.  That is what lets qc_set_comm stay in the list unconditionally
+# even though it only exists at MPI=1.
+
+# what this build is
+qc_native_precision
+
+# geometry
+qc_global_dims
+qc_local_dims
+qc_local_origin
+qc_num_rhs
+qc_num_colors
+qc_num_spins
+qc_field_elements
+qc_lane_elements
+qc_gauge_elements
+
+# field storage
+qc_alloc
+qc_free
+qc_field_zero
+
+# internal-order access (the zero-copy path)
+qc_site_index
+qc_site_coords
+qc_component_index
+
+# conventional-order access (the converting path)
+qc_import
+qc_export
+
+# startup, teardown, ranks
+qc_init
+qc_finalize
+qc_rank
+qc_num_ranks
+
+# MPI builds only -- declared in qc_mpi.h, absent at MPI=0
+qc_set_comm
+
+# gauge input
+qc_read_gauge_file
+
+# the solve
+qc_default_setup_params
+qc_default_solve_params
+qc_setup
+qc_solve
+qc_apply_D
+qc_report_profile
+qc_teardown

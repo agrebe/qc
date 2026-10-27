@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+cff-version: 1.2.0
+message: "If you use qc in your work, please cite the paper below."
+title: "qc"
+type: software
+authors:
+  - given-names: "Anthony V."
+    family-names: "Grebe"
+    affiliation: "University of Maryland"
+    orcid: "https://orcid.org/0000-0003-1032-0158"
+version: "1.0.0"
+date-released: 2026-10-26
+license: GPL-3.0-or-later
+repository-code: "https://github.com/agrebe/qc"
+keywords:
+  - lattice QCD
+  - multigrid
+preferred-citation:
+  type: conference-paper
+  title: "Toward Compute-Bound Lattice-QCD Software"
+  authors:
+    - given-names: "Anthony V."
+      family-names: "Grebe"
+      affiliation: "University of Maryland"
+      orcid: "https://orcid.org/0000-0003-1032-0158"
+  year: 2026
+  collection-title: "PoS LATTICE2026"
+  start: 112
+  conference:
+    name: "43rd International Symposium on Lattice Field Theory (Lattice 2026)"
+  identifiers:
+    - type: other
+      value: "arXiv:2610.35526"
+      description: "arXiv preprint"
+  url: "https://arxiv.org/abs/2610.35526"
